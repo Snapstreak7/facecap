@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DownApk - Download Best Hidden Anime Games & Mobile Emulators For Android/Ios Unlocked & Free Versions</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/Gv5pp9hD/Untitled-design-1.png" ">
+    <meta name="description" content="Download the best Hidden Gems and Emulators for Android & Ios. Get unlimited resources at DownApk.online.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --cyan: #00f3ff;
+            --pink: #ff007f;
+            --purple: #a855f7;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --card2: #f1f5f9;
+            --border: rgba(0, 0, 0, 0.08);
+            --text: #0f172a;
+            --muted: #64748b;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --header-scrolled: rgba(255, 255, 255, 0.95);
+        }
+
+        .dark {
+            --cyan: #00f3ff;
+            --pink: #ff007f;
+            --purple: #a855f7;
+            --bg: #0d1322; 
+            --card: #141a29;
+            --card2: #1a2235;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --muted: #9ca3af;
+            --header-bg: rgba(13, 19, 34, 0.85);
+            --header-scrolled: rgba(13, 19, 34, 0.98);
+        }
+
+        html, body { height: 100%; scroll-behavior: smooth; }
+
+         body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            transition: background-color 0.3s, color 0.3s;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at top, rgba(0, 243, 255, 0.1) 0%, rgba(255, 0, 127, 0.05) 40%, transparent 80%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ── Header Hide/Show Logic ── */
+        #main-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            background: var(--header-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        #main-header.scrolled { background: var(--header-scrolled); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        #main-header.hide { transform: translateY(-100%); }
+
+        .logo { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: var(--text); }
+        .logo span { color: var(--cyan); }
+
+        .icon-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--card2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; color: var(--text); }
+        .icon-btn:hover { background: var(--border); }
+
+        /* ── Hero Swiper ── */
+        .hero-swiper-container { margin: 10px -20px 20px; padding: 10px 20px; }
+        .hero-swiper { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 10px; }
+        .hero-swiper::-webkit-scrollbar { display: none; }
+        
+        .hero-slide { flex: 0 0 88%; scroll-snap-align: center; border-radius: 24px; overflow: hidden; position: relative; aspect-ratio: 16/9; box-shadow: 0 10px 25px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s; }
+        .hero-slide:active { transform: scale(0.98); }
+        
+        .slide-bg { width: 100%; height: 100%; object-fit: cover; }
+        .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(13,19,34,0.95) 0%, rgba(13,19,34,0.3) 60%, transparent 100%); pointer-events: none; }
+        .slide-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px; display: flex; flex-direction: column; align-items: flex-start; pointer-events: none; }
+
+        /* ── Big Nav Cards ── */
+        .big-nav-cards { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 10px; }
+        @media(min-width: 640px) { .big-nav-cards { grid-template-columns: 1fr 1fr; } }
+        
+        .nav-card { position: relative; border-radius: 18px; padding: 16px 20px; text-decoration: none; transition: all 0.3s ease; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 16px; background: var(--card); border: 1px solid var(--border); overflow: hidden; }
+        .nav-card.games { border-left: 4px solid var(--cyan); }
+        .nav-card.games:hover { box-shadow: 0 10px 25px rgba(0, 243, 255, 0.1); transform: translateY(-3px); border-color: rgba(0, 243, 255, 0.3); }
+        .nav-card.apps { border-left: 4px solid var(--pink); }
+        .nav-card.apps:hover { box-shadow: 0 10px 25px rgba(255, 0, 127, 0.1); transform: translateY(-3px); border-color: rgba(255, 0, 127, 0.3); }
+
+        .nav-icon-box { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+        .nav-card.games .nav-icon-box { background: rgba(0, 243, 255, 0.1); color: var(--cyan); }
+        .nav-card.apps .nav-icon-box { background: rgba(255, 0, 127, 0.1); color: var(--pink); }
+        
+        .nav-text { display: flex; flex-direction: column; }
+        .nav-text h3 { font-size: 17px; font-weight: 900; color: var(--text); margin-bottom: 2px; letter-spacing: 0.02em; }
+        .nav-text p { font-size: 12px; color: var(--muted); font-weight: 600; margin: 0; }
+        
+        .nav-arrow { margin-left: auto; color: var(--muted); font-size: 20px; transition: transform 0.3s; }
+        .nav-card:hover .nav-arrow { transform: translateX(4px); color: var(--text); }
+
+        .section-title { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 900; color: var(--text); margin: 30px 0 16px; }
+        .section-title i { font-size: 22px; }
+
+        /* ── Grid Styles ── */
+        .game-card-grid { border-radius: 20px; background: var(--card); border: 1px solid var(--border); overflow: hidden; transition: transform 0.2s; cursor: pointer; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; height: 100%; }
+        .game-card-grid:hover { transform: translateY(-4px); border-color: var(--cyan); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        
+        .grid-thumb { width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border-radius: 14px; background: transparent; margin-bottom: 12px; }
+        .grid-thumb img { width: 95px; height: 95px; border-radius: 20px; object-fit: cover; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .game-card-grid:hover .grid-thumb img { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0, 243, 255, 0.15); }
+        
+        .grid-body { padding: 0; display: flex; flex-direction: column; flex: 1; width: 100%; align-items: center; }
+        .grid-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: center; margin-bottom: 4px; }
+        .card-cat { font-size: 9.5px; margin-bottom: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
+        
+        .grid-stats { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding: 10px 0 8px; margin-bottom: 12px; margin-top: auto; width: 100%; }
+        .grid-stat-item { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; color: var(--muted); }
+        .grid-stat-item span { font-size: 10.5px; font-weight: 800; font-family: 'Outfit', sans-serif; }
+        .grid-stats-divider { width: 1px; height: 16px; background: var(--border); }
+
+        .grid-bottom { display: flex; justify-content: center; align-items: center; width: 100%; }
+        .grid-dl-btn { padding: 8px 0; width: 90%; border-radius: 12px; border: 1px solid var(--border); background: var(--card2); font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--cyan); cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s; letter-spacing: 0.05em; text-align: center; }
+        .grid-dl-btn:hover { background: var(--cyan); color: #fff; border-color: var(--cyan); }
+
+        .new-badge { position: absolute; top: 0px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: rgba(0,243,255,0.9); color: #000; z-index: 10; box-shadow: 0 4px 10px rgba(0,243,255,0.3); }
+
+        /* ── Horizontal Scroll Sections ── */
+        .scroll-track { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; margin: 0 -20px; padding: 0 20px 15px; }
+        .scroll-track::-webkit-scrollbar { display: none; }
+        .scroll-item { flex: 0 0 150px; scroll-snap-align: start; display: flex; flex-direction: column; }
+        @media (max-width: 480px) { .scroll-item { flex: 0 0 140px; } }
+        
+        .view-more-card { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; border-radius: 20px; background: transparent; border: 2px dashed; text-decoration: none; transition: all 0.2s; min-height: 180px; padding: 20px; text-align: center; }
+        .view-more-card:hover { transform: translateY(-4px); }
+        .view-more-card i { font-size: 32px; margin-bottom: 8px; transition: transform 0.2s; }
+        .view-more-card:hover i { transform: translateX(4px); }
+        .view-more-card span { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* ── Trending Grid ── */
+        #trendingGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (max-width: 480px) { #trendingGrid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+        /* ── NEW VIP BANNER DESIGN 👑 ── */
+        .vip-container { 
+            margin: 50px 0 30px; 
+            padding: 2px; 
+            border-radius: 26px; 
+            background: linear-gradient(45deg, #00f3ff, #ff007f, #a855f7, #00f3ff); 
+            background-size: 300% 300%;
+            animation: borderGradient 4s ease infinite;
+            box-shadow: 0 10px 30px rgba(255, 0, 127, 0.15);
+        }
+        @keyframes borderGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        .vip-card { 
+            background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(20px);
+            border-radius: 24px; 
+            padding: 40px 24px; 
+            text-align: center; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .vip-card::before { 
+            content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; 
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.2) 0%, transparent 70%); pointer-events: none; 
+        }
+        .vip-card::after { 
+            content: ''; position: absolute; bottom: -50px; left: -50px; width: 150px; height: 150px; 
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.2) 0%, transparent 70%); pointer-events: none; 
+        }
+        
+        .join-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; letter-spacing: -0.02em; }
+        .join-subtitle { font-size: 13px; color: #cbd5e1; margin-bottom: 28px; line-height: 1.6; max-width: 90%; margin-left: auto; margin-right: auto; }
+        
+        .auth-form { display: flex; flex-direction: column; gap: 14px; max-width: 320px; margin: 0 auto; position: relative; z-index: 2; }
+        .auth-input { width: 100%; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: #fff; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; transition: all 0.3s; }
+        .auth-input:focus { border-color: var(--cyan); background: rgba(0,0,0,0.5); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
+        .auth-input::placeholder { color: #64748b; }
+        
+        .auth-btn { width: 100%; padding: 16px; border-radius: 14px; background: linear-gradient(135deg, #00f3ff, #a855f7); color: #000; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; border: none; cursor: pointer; transition: all 0.3s; }
+        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 243, 255, 0.4); }
+        
+        .auth-switch { font-size: 12px; color: #94a3b8; margin-top: 14px; cursor: pointer; }
+        .auth-switch span { color: #ff007f; font-weight: 800; text-decoration: underline; text-underline-offset: 2px; }
+
+        /* ── Bottom Navigation Bar ── */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(13, 19, 34, 0.85); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 12px 10px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 990; }
+        .bottom-nav a { display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease; }
+        .bottom-nav a i { font-size: 22px; transition: transform 0.3s ease, filter 0.3s ease; }
+        .bottom-nav a:hover, .bottom-nav a.active { color: var(--text); }
+        .bottom-nav a:hover i, .bottom-nav a.active i { transform: translateY(-3px); filter: brightness(1.2); drop-shadow(0 0 8px currentColor); }
+
+        #backToTop { position: fixed; right: 24px; width: 46px; height: 46px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s; z-index: 999; box-shadow: 0 10px 20px rgba(0,0,0,0.5); bottom: 85px; }
+        #backToTop.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        #backToTop:hover { transform: translateY(-4px); border-color: var(--cyan); color: var(--cyan); }
+
+        /* ── Modals & Overlays ── */
+        #modalOverlay { position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center; padding: 16px; perspective: 1000px; }
+        #modalOverlay.open { display: flex; }
+        .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(16px); opacity: 0; transition: opacity 0.4s ease; }
+        #modalOverlay.open .modal-backdrop { opacity: 1; }
+        .modal-box { position: relative; z-index: 10; width: 100%; max-width: 420px; border-radius: 20px; background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 40px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.15); overflow: hidden; opacity: 0; }
+        #modalOverlay.open .modal-box { animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalSlideUp { 0% { opacity: 0; transform: translateY(80px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        .hero-img-wrap { position: relative; height: 260px; overflow: hidden; }
+        .hero-img-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(15,15,20,0.2) 40%, rgba(15,15,20,1) 100%); pointer-events: none; }
+        .pro-btn { position: relative; overflow: hidden; width: 100%; padding: 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; font-family:'Outfit',sans-serif; }
+        .pro-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transform: skewX(-25deg); transition: 0.6s; }
+        .pro-btn:hover::before { left: 150%; }
+        .pro-btn:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.3); }
+
+        .cf-overlay { position: fixed; inset: 0; z-index: 11000; background: var(--bg); display: none; flex-direction: column; padding: 16px; opacity: 0; }
+        .cf-overlay.open { display: flex; animation: cfFadeIn 0.5s ease-out forwards; }
+        .locker-overlay { position: fixed; inset: 0; z-index: 12000; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; }
+        .locker-overlay.open { display: flex; }
+        .locker-box { width: 90%; max-width: 1000px; height: 80vh; background: #000; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; position: relative; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cf-spin { 100% { transform: rotate(360deg); } }
+        @keyframes cfFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .cf-spinner-el { border: 3px solid transparent; border-top-color: #22c55e; border-radius: 50%; width: 28px; height: 28px; animation: cf-spin 1s linear infinite; }
+        .cf-loader-el { border: 2px solid var(--border); border-top-color: #22c55e; border-radius: 50%; width: 16px; height: 16px; animation: cf-spin 1s linear infinite; }
+        .animate-fade-up { animation: fadeUp 0.7s ease-out forwards; }
+        
+        /* ── Sidebar ── */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar-menu { position: fixed; top: 0; right: 0; bottom: 0; width: 280px; background: #0f172a; z-index: 1000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; color: #f8fafc; box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5); }
+        .sidebar-menu.active { transform: translateX(0); }
+        .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .sidebar-logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 900; font-size: 1.2rem; letter-spacing: -0.02em; color: white; }
+        .sidebar-logo span { color: var(--cyan); }
+        .sidebar-close { color: #94a3b8; background: rgba(255, 255, 255, 0.1); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all 0.2s; cursor: pointer; border: none; }
+        .sidebar-close:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+        .sidebar-content { padding: 1.5rem; overflow-y: auto; flex: 1; }
+        .sidebar-section { margin-bottom: 2rem; }
+        .sidebar-section-title { font-size: 0.75rem; font-weight: 800; color: #64748b; letter-spacing: 1px; margin-bottom: 1rem; text-transform: uppercase; }
+        .sidebar-link { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; color: #cbd5e1; border-radius: 12px; transition: all 0.2s; font-size: 0.95rem; font-weight: 500; margin-bottom: 0.5rem; text-decoration: none; }
+        .sidebar-link:hover { background: rgba(255, 255, 255, 0.05); color: white; }
+        .sidebar-link.active { background: linear-gradient(90deg, rgba(0, 243, 255, 0.15) 0%, transparent 100%); color: white; position: relative; }
+        .sidebar-link.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 4px; height: 60%; background: var(--cyan); border-radius: 0 4px 4px 0; }
+        .join-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; border-radius: 12px; background: var(--cyan); color: #000; font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; margin-top: 1rem; }
+        .join-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    </style>
+</head>
+
+<body>
+
+    <header id="main-header" class="px-5 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center relative">
+            <div class="flex items-center gap-2">
+                <a href="#" class="active" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;" style="display: flex; align-items: center; text-decoration: none; gap: 8px;">
+                    <img src="https://i.ibb.co/gbsY945Q/Black-and-Green-Illustrative-E-Sports-Gaming-Logo-2-removebg.png" alt="DownApk Logo" style="width: 28px; height: 28px; object-fit: contain;">
+                    <div class="logo">Down<span>Apk</span></div>
+                </a>
+            </div>
+
+            <div class="flex gap-2 items-center">
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+                    <svg id="sunIcon" class="w-5 h-5 hidden text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="#000000" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button class="icon-btn" id="menuToggleBtn" aria-label="Menu">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <div class="flex items-center gap-2">
+                <img src="https://i.ibb.co/gbsY945Q/Black-and-Green-Illustrative-E-Sports-Gaming-Logo-2-removebg.png" alt="DownApk Logo" style="width: 24px; height: 24px;">
+                <div class="sidebar-logo">Down<span>Apk</span></div>
+            </div>
+            <button class="sidebar-close" id="sidebarClose">✕</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">MENUS</div>
+                <a href="#" class="sidebar-link active" onclick="closeSidebar(); window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">
+                    <i class="ri-home-fill" style="font-size: 20px;"></i> Home
+                </a>
+                <a href="https://downapk.online/Games/" class="sidebar-link">
+                    <i class="ri-gamepad-fill" style="font-size: 20px;"></i> Games
+                </a>
+                <a href="https://downapk.online/Emulators/" class="sidebar-link">
+                    <i class="ri-switch-fill" style="font-size: 20px;"></i> Emulators
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">SOCIALS</div>
+                <a href="#" target="_blank" class="sidebar-link">
+                    <i class="ri-discord-fill" style="font-size: 20px;"></i> Discord
+                </a>
+                <a href="#" target="_blank" class="sidebar-link">
+                    <i class="ri-tiktok-fill" style="font-size: 20px;"></i> TikTok
+                </a>
+                <a href="#" target="_blank" class="sidebar-link">
+                    <i class="ri-youtube-fill" style="font-size: 20px;"></i> YouTube
+                </a>
+            </div>
+            <a href="#" target="_blank" class="join-btn">JOIN NOW</a>
+        </div>
+    </nav>
+
+    <main style="padding-top: 85px; padding-bottom: 40px;">
+        <div class="max-w-6xl mx-auto px-5">
+            
+            <div class="hero-swiper-container animate-fade-up">
+                <div class="hero-swiper" id="heroSwiper"></div>
+            </div>
+
+            <div class="big-nav-cards animate-fade-up anim-delay-1">
+                <a href="https://downapk.online/Games/" class="nav-card games">
+                    <div class="nav-icon-box"><i class="ri-gamepad-fill"></i></div>
+                    <div class="nav-text">
+                        <h3>All Mobile Games</h3>
+                        <p>Explore Best Hidden Gems With Casual & Retro For Free & Unlocked Features</p>
+                    </div>
+                    <i class="ri-arrow-right-s-line nav-arrow"></i>
+                </a>
+                
+                <a href="https://downapk.online/Emulators/" class="nav-card apps">
+                    <div class="nav-icon-box"><i class="ri-switch-fill"></i></div>
+                    <div class="nav-text">
+                        <h3>Mobile Emulators</h3>
+                        <p>Play PC, Switch, and Console Games on your Phone</p>
+                    </div>
+                    <i class="ri-arrow-right-s-line nav-arrow"></i>
+                </a>
+            </div>
+
+            <div class="animate-fade-up anim-delay-2" style="margin-top: 30px;">
+                <h2 class="section-title"><i class="ri-gamepad-fill" style="color:var(--cyan);"></i> Popular Games</h2>
+                <div class="scroll-track" id="gamesScrollTrack"></div>
+            </div>
+
+            <div class="animate-fade-up anim-delay-3" style="margin-top: 20px;">
+                <h2 class="section-title"><i class="ri-switch-fill" style="color:var(--pink);"></i> Popular Emulators</h2>
+                <div class="scroll-track" id="emulatorsScrollTrack"></div>
+            </div>
+
+            <div class="animate-fade-up anim-delay-3" style="margin-top: 20px;">
+                <h2 class="section-title"><i class="ri-fire-fill" style="color:#ef4444;"></i> Trending Now</h2>
+                <div id="trendingGrid"></div>
+            </div>
+
+            <div class="vip-container animate-fade-up anim-delay-3">
+                <div class="vip-card">
+                    <h2 class="join-title">
+                        <i class="ri-vip-cron-fill" style="color: #fbbf24; font-size: 28px;"></i>
+                        Premium VIP Access
+                    </h2>
+                    <p class="join-subtitle">Join the elite club! Request specific Anime Games, get Early Access to Emulators, and bypass human verification forever.</p>
+                    
+                    <div class="auth-form" id="signupForm">
+                        <input type="email" class="auth-input" placeholder="Enter your email address" autocomplete="off" />
+                        <input type="password" class="auth-input" placeholder="Create a strong password" autocomplete="off" />
+                        <button class="auth-btn" onclick="startGenerator('VIP_ACCESS')">Create Account</button>
+                        <div class="auth-switch" onclick="toggleAuth()">Already have an account? <span>Login here</span></div>
+                    </div>
+
+                    <div class="auth-form" id="loginForm" style="display: none;">
+                        <input type="email" class="auth-input" placeholder="Email address" autocomplete="off" />
+                        <input type="password" class="auth-input" placeholder="Password" autocomplete="off" />
+                        <button class="auth-btn" onclick="startGenerator('VIP_ACCESS')">Login</button>
+                        <div class="auth-switch" onclick="toggleAuth()">New to DownApk? <span>Sign Up</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="border-top:1px solid var(--border);background:var(--card);padding:48px 24px 100px;text-align:center;">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <img src="https://i.ibb.co/gbsY945Q/Black-and-Green-Illustrative-E-Sports-Gaming-Logo-2-removebg.png" alt="DownApk Logo" style="width: 32px; height: 32px;">
+                <div class="logo" style="font-size:28px;">Down<span style="color:var(--cyan);">Apk</span></div>
+            </div>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.6;font-weight:500;">The best place to discover and download Mobile Anime Games & Emulators.</p>
+            <div style="display:flex;justify-content:center;gap:24px;margin-bottom:24px;">
+                <span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--text);cursor:pointer;opacity:0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">Privacy Policy</span>
+                <span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--text);cursor:pointer;opacity:0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">Terms of Service</span>
+                <span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--text);cursor:pointer;opacity:0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">About Us</span>
+            </div>
+            <p style="font-size:11px;color:var(--muted);font-weight:800;letter-spacing:0.2em;text-transform:uppercase;">© 2026 DOWNAPK · ALL RIGHTS RESERVED</p>
+        </div>
+    </footer>
+
+    <nav class="bottom-nav">
+        <a href="#" class="active" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">
+            <i class="ri-home-5-fill" style="color: #00f3ff;"></i> 
+            <span>Home</span>
+        </a>
+        <a href="https://downapk.online/Games/">
+            <i class="ri-gamepad-fill" style="color: #a855f7;"></i> 
+            <span>Games</span>
+        </a>
+        <a href="https://downapk.online/Emulators/">
+            <i class="ri-switch-fill" style="color: #ff007f;"></i> 
+            <span>Emulators</span>
+        </a>
+        <a href="https://www.youtube.com/watch?v=your-video-id" target="_blank">
+            <i class="ri-youtube-fill" style="color: #ef4444;"></i> 
+            <span>How To Verify</span>
+        </a>
+    </nav>
+
+    <div id="modalOverlay">
+        <div class="modal-backdrop" id="modalClose" onclick="closeModal()"></div>
+        <div class="modal-box" id="modalBox">
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div class="cf-overlay" id="cf-overlay" style="background-color: #000;">
+        <div class="cf-content-anim" style="padding-top:80px;max-width:800px;width:100%;flex:1;display:flex;flex-direction:column;margin:0 auto; font-family: 'Poppins', sans-serif;">
+            
+            <div>
+                <p style="font-size:19px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Downapk.online</p>
+                <h1 style="font-size:32px;font-weight:800;color:white;margin-bottom:10px;letter-spacing:-0.02em;">Performing security<br>verification</h1>
+                <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin-bottom:40px;max-width:480px;">This website uses a security service to protect against malicious bots. This page is displayed while we verify you are not a bot.</p>
+
+                <div style="background:#222;border:1px solid #fff;border-radius:6px;width:100%;max-width:340px;height:75px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+                    <div style="display:flex;align-items:center;gap:14px;" id="cf-interaction">
+                        <div id="cf-initial-box" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><div class="cf-loader-el"></div></div>
+                        <div id="cf-checkbox" style="display:none;width:28px;height:28px;border:2px solid #9ca3af;border-radius:4px;cursor:pointer;background:transparent;" onclick="startCFVerification()"></div>
+                        <div id="cf-spinner" style="display:none;width:28px;height:28px;position:relative;"><div class="cf-spinner-el" style="position:absolute;inset:0;"></div></div>
+                        
+                        <div id="cf-failure" style="display:none;width:28px;height:28px;border:2px solid #9ca3af;border-radius:4px;align-items:center;justify-content:center;">
+                            <svg width="22" height="22" fill="none" stroke="#f97316" stroke-width="4.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </div>
+                        
+                        <span id="cf-text" style="color:#9ca3af;font-size:15px;font-weight:600;">Verifying...</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0px;">
+                        <div style="margin-bottom: -7px; display: flex; justify-content: flex-end;">
+                            <img src="https://i.ibb.co/nqV5JMM8/cloudflare-logo-black-sth-2-removebg-preview.png" alt="Cloudflare" id="cf-logo-img" style="height: 50px; width: auto; object-fit: contain;">
+                        </div>
+                        <div style="font-size:10px;color:#fff;"><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" style="color:#fff;text-decoration:none;">Privacy</a> · <a href="https://www.cloudflare.com/website-terms/" target="_blank" style="color:#fff;text-decoration:none;">Help</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:auto; padding-bottom: 20px; width:100%;">
+                <div style="border-top:1px solid #333;padding-top:20px;text-align:center;">
+                    <p style="font-size:13px;color:white;margin-bottom:4px;font-weight:600;">Ray ID: <span id="rayId" style="font-family:monospace;color:#9ca3af;font-weight:400;"></span></p>
+                    <p style="font-size:13px;color:white;font-weight:600;">Performance & Security by <a href="https://www.cloudflare.com" target="_blank" style="color:#3b82f6;text-decoration:underline;font-weight:400;">Cloudflare</a> <span style="color:#9ca3af; margin:0 4px;">|</span> <a href="https://www.cloudflare.com/website-terms/" target="_blank" style="color:#3b82f6;text-decoration:underline;font-weight:400;">Privacy</a></p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="locker-overlay" id="locker-overlay">
+        <div class="locker-box">
+            <button onclick="closeLocker()" style="position:absolute;top:12px;right:12px;z-index:10;width:38px;height:38px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;cursor:pointer;">✕</button>
+            <iframe id="locker-iframe" style="width:100%;height:100%;border:none;background:#000;"></iframe>
+        </div>
+    </div>
+
+    <button id="backToTop" aria-label="Back to Top">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m18 15-6-6-6 6"/></svg>
+    </button>
+
+    <script>
+        // ── Home Page Data ──
+        const HERO_DATA = [
+             { id: '4', title: 'Tag After School', category: 'Horror', thumbnail: 'https://myvideogamelist-com.s3.amazonaws.com/assets/boxart/NBSOjcDLZoMdlLDfS7n4EwQuxnboe0DeeL7Cq7Q5.jpg', rating: 4.3, cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+             { id: '123', title: 'Apostate Verity', category: 'RPG', thumbnail: 'https://i.ytimg.com/vi/VD-LfRI2m_A/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAnB0QwjeiEpl44BPjRMi6tX7ZadQ', rating: 4.8, cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true },
+            { id: '2', title: 'Kunoichi Sekiren', category: 'Action', thumbnail: 'https://thomastaihei-hgames.net/wp-content/uploads/2020/11/HG361-01.jpg', rating: 4.7, cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+           { id: '29', title: 'Doll Room', category: 'Simulation', thumbnail: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/2ebf3ed7-a0a6-4740-b6aa-c682835be53b/djy8erb-6dbe1253-042a-49f0-86c2-be8d3da6bf29.jpg/v1/fill/w_622,h_350,q_70,strp/doll_room_apk_9_7_descargar_gratis_para_android_by_bnrthfg_djy8erb-350t.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6Ii9mLzJlYmYzZWQ3LWEwYTYtNDc0MC1iNmFhLWM2ODI4MzViZTUzYi9kank4ZXJiLTZkYmUxMjUzLTA0MmEtNDlmMC04NmMyLWJlOGQzZGE2YmYyOS5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.8XJFXrvtSad53QLqLT16ECG9ZEsaq1dalqSGa__AxfU', rating: 4.1, size: '180 MB', version: 'v1.0', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true },
+        ];
+
+        const GAMES_SCROLL_DATA = [
+            { id: '138', title: 'Neverness to Everness Mobile Apk ', category: 'Casual', thumbnail: 'https://gaming-cdn.com/images/products/20168/orig/neverness-to-everness-playstation-5-playstation-store-cover.jpg?v=1772105288', rating: 4.2, size: '4.6 GB', version: 'v1.0.0', cpa:  'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true },
+             { id: '24', title: 'Hospital Seduction', category: 'Simulation', thumbnail: 'https://i.ibb.co/V4nG3DH/images.jpg', rating: 4.3, size: '420 MB', version: 'v1.1', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true },
+            { id: '29', title: 'Doll Room', category: 'Simulation', thumbnail: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/2ebf3ed7-a0a6-4740-b6aa-c682835be53b/djy8erb-6dbe1253-042a-49f0-86c2-be8d3da6bf29.jpg/v1/fill/w_622,h_350,q_70,strp/doll_room_apk_9_7_descargar_gratis_para_android_by_bnrthfg_djy8erb-350t.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzIwIiwicGF0aCI6Ii9mLzJlYmYzZWQ3LWEwYTYtNDc0MC1iNmFhLWM2ODI4MzViZTUzYi9kank4ZXJiLTZkYmUxMjUzLTA0MmEtNDlmMC04NmMyLWJlOGQzZGE2YmYyOS5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.8XJFXrvtSad53QLqLT16ECG9ZEsaq1dalqSGa__AxfU', rating: 4.1, size: '180 MB', version: 'v1.0', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true },
+            { id: '26', title: 'Lala and the Bizarre Dungeon', category: 'RPG', thumbnail: 'https://cdn.apkbine.com/userfiles/images/lala%20and%20the%20bizarre%20dungeon%20apk%20thumnail.jpg', rating: 4.7, size: '510 MB', version: 'v1.2', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true }
+        ];
+
+        const EMULATORS_SCROLL_DATA = [
+            { id: 'e7', title: 'PPSSPP Pro', category: 'PSP', thumbnail: 'https://api.duniagames.co.id/optimize-image?url=https://api.duniagames.co.id/api/content/upload/file/15173290451582712504.jpg&format=webp&width=736&signature=66a879a4b210e6f93f9425800fb4cc74325fc9b6219f3f267b7eb73d2983b4a8', rating: 4.9, size: '30 MB', version: 'v1.17.1', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+            { id: 'e3', title: 'Vita3K', category: 'PS Vita', thumbnail: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2023/02/vita3k-android-logo-feature.jpg', rating: 4.6, size: '45 MB', version: 'v0.1.9', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+            { id: 'e9', title: 'Dolphin Emulator', category: 'Wii/GameCube', thumbnail: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2020/05/dolphin-emulator.jpg', rating: 4.7, size: '22 MB', version: 'v5.0', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+             { id: 'e8', title: 'AetherSX2', category: 'PS2', thumbnail: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbgOdcHozSRmULB0eVW6BgbguiuwWFFYYyaQ&s', rating: 4.8, size: '18 MB', version: 'v1.5', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' }
+        ];
+
+        const TRENDING_DATA = [
+           { id: '7', title: 'MotorSlice', category: 'Action', thumbnail: 'https://i0.wp.com/indiegame.com/wp-content/uploads/2026/05/MOTORSLICE-_Logo.png?fit=1024,1024&ssl=1', rating: 4.7, size: '3.1 GB', version: 'v0.5.0.0', cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+            { id: '4', title: 'Tag After School', category: 'Horror', thumbnail: 'https://myvideogamelist-com.s3.amazonaws.com/assets/boxart/NBSOjcDLZoMdlLDfS7n4EwQuxnboe0DeeL7Cq7Q5.jpg', rating: 4.3, cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' },
+             { id: '123', title: 'Apostate Verity', category: 'RPG', thumbnail: 'https://i.ytimg.com/vi/VD-LfRI2m_A/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAnB0QwjeiEpl44BPjRMi6tX7ZadQ', rating: 4.8, cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j', isNew: true },
+            { id: '2', title: 'Kunoichi Sekiren', category: 'Action', thumbnail: 'https://thomastaihei-hgames.net/wp-content/uploads/2020/11/HG361-01.jpg', rating: 4.7, cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' }
+        ];
+
+        const ALL_DATA = [...HERO_DATA, ...TRENDING_DATA, ...GAMES_SCROLL_DATA, ...EMULATORS_SCROLL_DATA];
+
+        const CATEGORY_ACCENT = {
+            'Action': '#00f3ff', 'RPG': '#a855f7', 'Visual Novel': '#ff007f', 'Adventure': '#22c55e', 'Simulation': '#eab308', 'Casual': '#ec4899',
+            'RenPy/RPG Maker': '#ff007f', 'PC Emulator': '#00f3ff', 'Nintendo Switch': '#ef4444', 'PS Vita': '#3b82f6'
+        };
+
+        let currentActiveItem = null;
+
+        // Theme Toggle
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('themeToggle');
+        function applyTheme() {
+            if (localStorage.getItem('theme') === 'light') {
+                htmlEl.classList.remove('dark');
+                document.getElementById('sunIcon').classList.add('hidden');
+                document.getElementById('moonIcon').classList.remove('hidden');
+            } else {
+                htmlEl.classList.add('dark');
+                document.getElementById('sunIcon').classList.remove('hidden');
+                document.getElementById('moonIcon').classList.add('hidden');
+            }
+        }
+        applyTheme();
+        themeToggleBtn.addEventListener('click', () => {
+            localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'light' : 'dark');
+            applyTheme();
+        });
+
+        // ── Generators ──
+        function generateCardHTML(item) {
+            const accent = CATEGORY_ACCENT[item.category] || '#00f3ff';
+            // إذا كانت إيميلاتور (الصورة جاية من github)، نعطيوها object-fit: contain باش تبان مزيان
+            const imgStyle = item.thumbnail.includes('github') ? 'object-fit: contain; background: #fff;' : 'object-fit: cover;';
+            
+            return `
+                <div class="game-card-grid" onclick="openModal('${item.id}')" style="height: 100%;">
+                    <div class="grid-thumb">
+                        <img src="${item.thumbnail}" alt="${item.title}" loading="lazy" style="${imgStyle}">
+                    </div>
+                    <div class="grid-body">
+                        <div class="grid-title">${item.title}</div>
+                        <div class="card-cat" style="color:${accent};">${item.category}</div>
+                        
+                        <div class="grid-stats">
+                            <div class="grid-stat-item">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <span>${item.version}</span>
+                            </div>
+                            <div class="grid-stats-divider"></div>
+                            <div class="grid-stat-item">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                                <span>${item.size}</span>
+                            </div>
+                        </div>
+                        <div class="grid-bottom">
+                            <button class="grid-dl-btn" onclick="event.stopPropagation();openModal('${item.id}')">Get</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Hero
+        document.getElementById('heroSwiper').innerHTML = HERO_DATA.map(item => {
+            const accent = CATEGORY_ACCENT[item.category] || '#00f3ff';
+            return `
+                <div class="hero-slide" onclick="openModal('${item.id}')">
+                    <img src="${item.thumbnail}" class="slide-bg" alt="${item.title}" loading="lazy">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <span style="background:rgba(0,0,0,0.5); border:1px solid ${accent}40; color:${accent}; padding:4px 10px; border-radius:8px; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; backdrop-filter:blur(4px);">${item.category}</span>
+                        <h2 style="font-size:24px; font-weight:900; color:white; line-height:1.1; margin-bottom:12px; text-shadow:0 4px 15px rgba(0,0,0,0.5);">${item.title}</h2>
+                        <button style="padding:10px 22px; background:var(--cyan); color:#000; font-size:12px; font-weight:900; border-radius:12px; border:none; text-transform:uppercase; letter-spacing:0.05em; pointer-events:auto;">Download Now</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Render Games Scroll
+        const gamesScrollTrack = document.getElementById('gamesScrollTrack');
+        gamesScrollTrack.innerHTML = GAMES_SCROLL_DATA.map(item => `<div class="scroll-item">${generateCardHTML(item)}</div>`).join('') + `
+            <div class="scroll-item">
+                <a href="https://downapk.online/Games/" class="view-more-card" style="border-color: var(--cyan); color: var(--cyan);">
+                    <i class="ri-arrow-right-circle-line"></i>
+                    <span>View More</span>
+                </a>
+            </div>
+        `;
+
+        // Render Emulators Scroll
+        const emulatorsScrollTrack = document.getElementById('emulatorsScrollTrack');
+        emulatorsScrollTrack.innerHTML = EMULATORS_SCROLL_DATA.map(item => `<div class="scroll-item">${generateCardHTML(item)}</div>`).join('') + `
+            <div class="scroll-item">
+                <a href="https://downapk.online/Emulators/" class="view-more-card" style="border-color: var(--pink); color: var(--pink);">
+                    <i class="ri-arrow-right-circle-line"></i>
+                    <span>View More</span>
+                </a>
+            </div>
+        `;
+
+        // Render Trending
+        document.getElementById('trendingGrid').innerHTML = TRENDING_DATA.map(item => generateCardHTML(item)).join('');
+
+
+        // ── Auth Toggle Logic ──
+        function toggleAuth() {
+            const signup = document.getElementById('signupForm');
+            const login = document.getElementById('loginForm');
+            if (signup.style.display === 'none') {
+                signup.style.display = 'flex';
+                login.style.display = 'none';
+            } else {
+                signup.style.display = 'none';
+                login.style.display = 'flex';
+            }
+        }
+
+        // ── Modals & Logic ──
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+        
+        window.openModal = (itemId) => {
+            const item = ALL_DATA.find(i => i.id === itemId);
+            if (!item) return;
+            const accent = CATEGORY_ACCENT[item.category] || '#00f3ff';
+            const imgStyle = item.thumbnail.includes('github') ? 'object-fit: contain; background: #fff; padding: 20px;' : 'object-fit: cover;';
+
+            modalContent.innerHTML = `
+                <div class="hero-img-wrap" style="background:#fff;">
+                    <img src="${item.thumbnail}" alt="${item.title}" style="width:100%;height:100%;${imgStyle}" loading="lazy">
+                    <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;z-index:20;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;">✕</button>
+                    <div style="position:absolute;bottom:15px;left:0;width:100%;z-index:10;padding:0 24px;display:flex;justify-content:space-between;align-items:flex-end;">
+                        <span style="background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);border:1px solid ${accent}50;color:${accent};padding:3px 8px;border-radius:6px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;">${item.category}</span>
+                    </div>
+                </div>
+
+                <div style="padding: 10px 28px 28px; text-align: center;">
+                    <h2 style="font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:10px;">${item.title}</h2>
+                    <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:26px;">
+                        <span style="color:#fbbf24;font-size:15px;font-weight:900;display:flex;align-items:center;gap:4px;">★ ${item.rating}</span>
+                        <span style="color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Fast • Free • Secure </span>
+                    </div>
+
+                    <div style="display:flex;flex-direction:row;gap:10px;margin-bottom:28px;">
+                        <button class="pro-btn" style="flex:1; padding:12px 8px; font-size:12px; background:#fff; color:#000; border:none;" onclick="startGenerator('${item.id}')">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9z"/></svg>
+                            Get for iOS
+                        </button>
+                        <button class="pro-btn" style="flex:1; padding:12px 8px; font-size:12px; background:linear-gradient(135deg, ${accent}dd, ${accent}); border-color:${accent}; color:#fff;" onclick="startGenerator('${item.id}')">
+                            <img src="https://i.ibb.co/jPKnqR6K/android.png" alt="Android" style="width:16px; height:16px; object-fit: contain; filter: brightness(0) invert(1);" />
+                            Get for Android
+                        </button>
+                    </div>
+                </div>
+            `;
+            modalOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeModal = () => {
+            modalOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        // Sidebar Logic
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+
+        function openSidebar() {
+            sidebarMenu.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeSidebar() {
+            sidebarMenu.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = ''; 
+        }
+
+        if(menuToggleBtn) menuToggleBtn.addEventListener('click', openSidebar);
+        if(sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+        if(sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // CF Overlay
+        window.startGenerator = (itemId) => {
+            if(itemId === 'VIP_ACCESS') {
+                currentActiveItem = { cpa: 'https://performingsecurity.downapk.online/cl/i/j77o9j' };
+            } else {
+                currentActiveItem = ALL_DATA.find(i => i.id === itemId);
+                closeModal();
+            }
+
+            const lastVerified = localStorage.getItem('cf_verified_time');
+            const now = Date.now();
+            const THREE_MINUTES = 3 * 60 * 1000;
+
+            if (lastVerified && (now - lastVerified < THREE_MINUTES)) {
+                showLocker();
+            } else {
+                const cfOverlay = document.getElementById('cf-overlay');
+                document.getElementById('cf-initial-box').style.display = 'flex';
+                document.getElementById('cf-checkbox').style.display = 'none';
+                document.getElementById('cf-spinner').style.display = 'none';
+                document.getElementById('cf-failure').style.display = 'none';
+                document.getElementById('cf-text').textContent = 'Verifying...';
+
+                cfOverlay.classList.add('open');
+
+                setTimeout(() => {
+                    document.getElementById('cf-initial-box').style.display = 'none';
+                    document.getElementById('cf-checkbox').style.display = 'flex';
+                    document.getElementById('cf-text').textContent = 'Verify you are human';
+                }, 2000);
+            }
+        };
+
+        window.startCFVerification = () => {
+            document.getElementById('cf-checkbox').style.display = 'none';
+            document.getElementById('cf-spinner').style.display = 'flex';
+            document.getElementById('cf-text').textContent = 'Verifying...';
+
+            setTimeout(() => {
+                document.getElementById('cf-spinner').style.display = 'none';
+                document.getElementById('cf-failure').style.display = 'flex';
+                document.getElementById('cf-text').textContent = 'Verification required!';
+
+                localStorage.setItem('cf_verified_time', Date.now());
+
+                setTimeout(() => {
+                    showLocker();
+                    const cf = document.getElementById('cf-overlay');
+                    cf.style.opacity = '0';
+                    setTimeout(() => { cf.classList.remove('open'); cf.style.opacity = ''; }, 500);
+                }, 800);
+            }, 1800);
+        };
+
+        window.showLocker = () => {
+            const url = currentActiveItem ? currentActiveItem.cpa : 'https://performingsecurity.downapk.online/cl/i/j77o9j';
+            window.location.href = url;
+        };
+
+        window.closeLocker = () => {
+            document.getElementById('locker-overlay').classList.remove('open');
+            setTimeout(() => { document.getElementById('locker-iframe').src = 'about:blank'; }, 300);
+        };
+
+        // Scroll Logic for Header & Back To Top
+        let lastScroll = 0;
+        const header = document.getElementById('main-header');
+        const backToTopBtn = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            
+            // Header BG
+            if (currentScroll > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+
+            // Header Hide/Show
+            if (currentScroll > lastScroll && currentScroll > 80) header.classList.add('hide');
+            else header.classList.remove('hide');
+            
+            lastScroll = currentScroll;
+
+            // Back to Top button
+            if (backToTopBtn) {
+                if (currentScroll > 300) backToTopBtn.classList.add('visible');
+                else backToTopBtn.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        if(backToTopBtn) backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        function generateRayId() {
+            return Math.random().toString(36).substring(2, 18) + Math.random().toString(36).substring(2, 18);
+        }
+        const rayIdElem = document.getElementById('rayId');
+        if(rayIdElem) rayIdElem.textContent = generateRayId();
+
+    </script>
+</body>
+</html>
