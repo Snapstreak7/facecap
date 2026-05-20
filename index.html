@@ -3,385 +3,679 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Facetime Access</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>FaceCap - Live Activity Viewer</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #121214;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #1b1b1b; color: #fafafa; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         
-        /* ── Transitions ── */
-        .view-section {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100dvh;
-            width: 100vw;
-            animation: fadeIn 0.4s ease forwards;
-            position: relative;
-            z-index: 10;
+        header { padding: 16px; font-weight: 500; font-size: 16px; color: #fafafa; position: absolute; top: 0; left: 0; width: 100%; z-index: 10; }
+        .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; text-align: center; z-index: 2; position: relative; width: 100%; max-width: 420px; margin: 0 auto; height: 100%; }
+
+        /* 🔥 الخلفية المضببة */
+        .blur-bg { 
+            position: absolute; inset: -50px; 
+            background-image: url('/assets/camera-view-tfK15Pz1.jpg'); 
+            background-size: cover; background-position: center; 
+            filter: blur(40px) brightness(0.4); 
+            opacity: 0; transition: opacity 1s ease; z-index: 1; pointer-events: none; 
         }
-        .view-section.active { display: flex; }
+
+        .icon-gradient { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(to bottom right, #22d3ee, #10b981); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .title-h2 { font-size: 20px; font-weight: 600; color: #fafafa; margin-bottom: 6px; }
+        .subtitle-xs { color: #a1a1aa; font-size: 12px; margin-bottom: 24px; }
+
+        .toggle-container { display: flex; gap: 8px; width: 100%; max-width: 280px; margin-bottom: 24px; }
+        .toggle-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+        .toggle-btn.active { background-color: #3b82f6; color: #ffffff; }
+        .toggle-btn.inactive { background-color: #27272a; color: #fafafa; }
+
+        .input-wrapper { width: 100%; margin-bottom: 12px; position: relative; }
+        .input-box { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background-color: #27272a; border-radius: 16px; color: #fafafa; border: none; font-size: 14px; cursor: pointer; }
+        .phone-prefix { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #a1a1aa; font-size: 16px; }
+        .phone-input { width: 100%; padding: 12px 20px 12px 64px; background-color: #27272a; border-radius: 16px; color: #fafafa; border: none; font-size: 16px; outline: none; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #18181b; border: 1px solid #3f3f46; border-radius: 12px; margin-top: 5px; z-index: 50; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .search-box { padding: 10px; border-bottom: 1px solid #3f3f46; }
+        .search-box input { width: 100%; padding: 8px 12px; background: #27272a; border: none; border-radius: 8px; color: white; outline: none; font-size: 14px; }
+        .country-list { max-height: 200px; overflow-y: auto; }
+        .country-item { padding: 12px 15px; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 14px; }
+        .country-item:hover { background: #27272a; }
 
-        /* ── Fake Blurred Background for Steps 3, 4 & 5 ── */
-        .blurred-bg {
-            position: absolute;
-            inset: 0;
-            background-image: url('https://images.unsplash.com/photo-1517365830460-955ce3ccd263?q=80&w=1000&auto=format&fit=crop'); 
-            background-size: cover;
-            background-position: center;
-            filter: blur(25px) brightness(0.4);
-            z-index: 1;
-            display: none;
-        }
-        .blurred-bg.active { display: block; }
+        .btn-continue { width: 100%; padding: 14px; border-radius: 16px; font-size: 14px; font-weight: 600; background-color: #3f3f46; color: #a1a1aa; border: none; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-continue.ready { background-color: #3b82f6; color: white; }
 
-        /* ── Loading Bar ── */
-        .progress-container { width: 220px; height: 3px; background: #333; border-radius: 4px; margin-top: 20px; overflow: hidden; }
-        .progress-bar { height: 100%; width: 0%; background: #3b82f6; transition: width 2.5s ease-in-out; }
+        .icon-grey { background: #27272a; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .icon-profile { width: 100px; height: 100px; background: rgba(39, 39, 42, 0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; backdrop-filter: blur(10px); }
+        .icon-profile svg { fill: #fafafa; width: 50px; height: 50px; }
+        .text-green { color: #10b981; font-size: 14px; margin-top: 5px; font-weight: 500; }
+        
+        .btn-row { display: flex; justify-content: space-between; gap: 12px; width: 100%; margin-top: 40px; margin-bottom: 20px; }
+        .btn-half { flex: 1; padding: 14px; border-radius: 16px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-green { background-color: #10b981; color: white; }
+        .btn-white { background-color: #ffffff; color: #000000; }
+        
+        .btn-close { width: 100%; padding: 14px; border-radius: 9999px; background-color: #27272a; color: #fafafa; border: none; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
 
-        /* ── Input Styling ── */
-        .input-group { border: 1.5px solid transparent; transition: all 0.3s; position: relative; }
-        .input-group.focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-        input:focus { outline: none; }
+        .progress-container { width: 80%; background: #27272a; height: 4px; border-radius: 2px; margin-top: 20px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: #3b82f6; transition: width 4s linear; }
 
-        /* Custom Dropdown */
-        .dropdown-list { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #2a2a30; border-radius: 12px; margin-top: 8px; max-height: 200px; overflow-y: auto; z-index: 50; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #3f3f46; }
-        .dropdown-list.active { display: block; }
-        .dropdown-item { padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #3f3f46; transition: background 0.2s; }
-        .dropdown-item:last-child { border-bottom: none; }
-        .dropdown-item:hover { background: #3f3f46; }
+        .footer-link { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #3b82f6; font-size: 13px; text-decoration: none; z-index: 10; font-weight: 500; }
+        .footer-link:hover { text-decoration: underline; }
 
-        /* ── النقط الخضر لي كيدورو ── */
-        .cf-spinner-el { border: 3px dotted #22c55e; border-radius: 50%; width: 28px; height: 28px; animation: cf-spin 1.5s linear infinite; }
-        .cf-loader-el { border: 3px dotted #22c55e; border-radius: 50%; width: 16px; height: 16px; animation: cf-spin 1.5s linear infinite; }
-        @keyframes cf-spin { 100% { transform: rotate(360deg); } }
-
-        /* ── Modals & Overlays ── */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; opacity: 0; transition: opacity 0.3s ease; }
+        /* 🔥 Modals (History, Live, Privacy, Verify, Locker) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: #09090b; width: 100%; max-width: 380px; border-radius: 20px; overflow: hidden; border: 1px solid #27272a; }
+        .modal-header { display: flex; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #27272a; font-weight: 600; font-size: 14px; }
         
-        .privacy-box { background: #1e1e22; border-radius: 20px; padding: 24px; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); transform: translateY(20px); transition: transform 0.3s ease; }
-        .modal-overlay.active .privacy-box { transform: translateY(0); }
+        .modal-video { width: 100%; height: 220px; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .modal-video::before { content: ""; position: absolute; inset: -20px; background-image: url('/assets/camera-view-tfK15Pz1.jpg'); background-size: cover; background-position: center; filter: blur(15px) brightness(0.5); z-index: 0; }
+        
+        .waiting-box { display: flex; flex-direction: column; align-items: center; z-index: 2; position: relative; }
+        .waiting-box svg { width: 40px; height: 40px; color: #fafafa; margin-bottom: 15px; opacity: 0.9; }
+        
+        .bouncing-dots { display: flex; gap: 6px; }
+        .bouncing-dots span { width: 10px; height: 10px; background-color: #3b82f6; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite ease-in-out both; }
+        .bouncing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .bouncing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        .locker-box { width: 95%; max-width: 600px; height: 75vh; background: #000; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s ease; }
-        .modal-overlay.active .locker-box { transform: translateY(0); }
-        .locker-iframe { width: 100%; height: 100%; border: none; background: #000; }
+        .modal-details { padding: 16px 20px; background: #18181b; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: #a1a1aa; }
 
-        /* ── Dots Animation ── */
-        .dots::after { content: ''; animation: dots 1.5s steps(5, end) infinite; }
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
+        /* 🔥 Big White Captcha */
+        .verify-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s; }
+        .verify-modal-overlay.active { display: flex; opacity: 1; }
+        .verify-box { background: #fff; width: 90%; max-width: 360px; border-radius: 12px; padding: 24px; text-align: center; }
+        .recaptcha-cont { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.08); padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; margin-bottom: 5px; }
+        .recaptcha-cont:hover { box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.15); }
+        .recaptcha-checkbox { width: 28px; height: 28px; background: #fff; border: 2px solid #c1c1c1; border-radius: 2px; }
+        .rc-spinner { display: none; border: 2px solid #f3f3f3; border-top: 2px solid #3b82f6; border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* 🔥 Locker */
+        .locker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .locker-overlay.active { display: flex; }
+        .locker-modal-box { width: 100%; max-width: 500px; height: 85vh; background: #fff; border-radius: 16px; overflow: hidden; position: relative; }
+        .locker-iframe { width: 100%; height: 100%; border: none; }
+
+        .step { display: none; width: 100%; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .step.active { display: flex; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <audio id="callingSound" src="https://www.soundjay.com/phone/sounds/phone-calling-1.mp3" preload="auto" loop></audio>
+    <div class="blur-bg" id="blurBg"></div>
+    <header>FaceCap</header>
 
-    <div class="blurred-bg" id="blurredBg"></div>
-
-    <div id="step1" class="view-section active px-6">
-        <div class="w-16 h-16 rounded-full bg-[#1e1e22] flex items-center justify-center mb-6">
-            <i class="ri-link text-2xl text-gray-400"></i>
-        </div>
-        <h1 class="text-xl font-semibold mb-8 text-gray-100">Facetime Camera Access</h1>
+    <div class="container">
         
-        <div class="w-full max-w-sm bg-[#1e1e22] rounded-xl p-4 mb-4 input-group" id="inputBox">
-            <div class="flex items-center justify-between border-b border-gray-700 pb-3 mb-3 cursor-pointer" onclick="toggleDropdown()" id="countrySelector">
-                <div class="flex items-center gap-3" id="selectedCountryUI">
-                    <span class="text-2xl" id="selFlag">🇺🇸</span>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-medium text-gray-200" id="selName">United States</span>
-                        <span class="text-xs text-gray-500" id="selCode">+1</span>
-                    </div>
+        <div class="step active" id="step1">
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%;">
+                <div class="icon-gradient">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"></path><path d="M15 7h2a5 5 0 1 1 0 10h-2"></path><line x1="8" x2="16" y1="12" y2="12"></line></svg>
                 </div>
-                <i class="ri-arrow-down-s-line text-gray-500"></i>
-            </div>
-            
-            <div class="dropdown-list" id="dropdownList"></div>
+                <h2 class="title-h2">Live Camera Access</h2>
+                <p class="subtitle-xs">This does not notify the device owner.</p>
 
-            <input type="tel" id="targetNumber" class="w-full bg-transparent text-lg text-gray-200 placeholder-gray-500 font-medium" placeholder="(123) 456-7890" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-        </div>
+                <div class="toggle-container">
+                    <button class="toggle-btn active" onclick="switchTab('phone')" id="btnPhone">
+                        <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> Phone
+                    </button>
+                    <button class="toggle-btn inactive" onclick="switchTab('email')" id="btnEmail">
+                        <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg> Email
+                    </button>
+                </div>
 
-        <button id="btnContinue" onclick="goToStep2()" class="w-full max-w-sm py-4 rounded-xl font-bold text-[15px] transition-all bg-[#2a2a30] text-gray-500" disabled>
-            Continue
-        </button>
-        
-        <p class="absolute bottom-8 text-[11px] font-medium text-gray-600 hover:text-gray-400 cursor-pointer" onclick="openPrivacyModal()">Privacy Policy</p>
-    </div>
-
-    <div id="step2" class="view-section">
-        <div class="w-16 h-16 rounded-full bg-[#1e1e22] flex items-center justify-center mb-6">
-            <i class="ri-link text-2xl text-gray-400"></i>
-        </div>
-        <h2 class="text-[17px] font-semibold text-gray-100 mb-2">Connecting</h2>
-        <p class="text-[13px] text-gray-400">Please wait<span class="dots"></span></p>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-    </div>
-
-    <div id="step3" class="view-section px-6">
-        <div class="relative mb-6 mt-[-40px]">
-            <div class="w-24 h-24 rounded-full bg-[#1e1e22] flex items-center justify-center border-4 border-[#121214]">
-                <i class="ri-user-3-line text-4xl text-gray-400"></i>
-            </div>
-            <div class="absolute bottom-1 right-1 w-6 h-6 bg-[#22c55e] rounded-full border-4 border-[#121214]"></div>
-        </div>
-        
-        <h2 class="text-lg font-bold text-white mb-10 tracking-wide">Device Online</h2>
-
-        <div class="w-full max-w-sm flex flex-col gap-4 relative z-20">
-            <button onclick="goToStep4()" class="w-full py-4 bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 transition-colors">
-                <i class="ri-history-line text-lg"></i> View History
-            </button>
-            <button onclick="goToStep4()" class="w-full py-4 bg-white hover:bg-gray-100 text-black rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 transition-colors shadow-lg">
-                <i class="ri-vidicon-line text-lg"></i> View Camera
-            </button>
-            <p class="text-center text-xs text-gray-400 mt-2 font-medium">Target won't be notified</p>
-        </div>
-    </div>
-
-    <div id="step4" class="view-section relative">
-        <div class="absolute top-6 left-6 flex items-center gap-2 text-[#3b82f6] font-bold text-[15px]">
-            <i class="ri-video-chat-fill text-xl"></i> Live Camera
-        </div>
-
-        <div class="w-20 h-20 rounded-full bg-[#1e1e22]/80 flex items-center justify-center mb-6 border border-gray-600/30">
-            <i class="ri-vidicon-line text-3xl text-gray-300"></i>
-        </div>
-        <h2 class="text-[16px] font-semibold text-gray-100 tracking-wide">Connecting to live feed<span class="dots"></span></h2>
-        
-        <div class="absolute bottom-8 left-6 flex gap-6">
-            <div class="flex flex-col">
-                <span class="text-[11px] text-gray-400 font-medium">Device</span>
-                <span class="text-[14px] text-white font-bold tracking-wide">iPhone</span>
-            </div>
-            <div class="flex flex-col">
-                <span class="text-[11px] text-gray-400 font-medium">Quality</span>
-                <span class="text-[14px] text-[#22c55e] font-bold tracking-wide">HD</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="step5" class="view-section px-5 relative z-20" style="background-color: rgba(18, 18, 20, 0.7); backdrop-filter: blur(8px);">
-        
-        <div class="flex flex-col items-center justify-center w-full max-w-sm">
-            
-            <div class="text-center mb-5 w-full">
-                <h2 class="text-[22px] font-bold text-white mb-2 tracking-wide text-center">
-                    Human Verification
-                </h2>
-                <p class="text-[13px] text-gray-300 px-4">Please complete the security verification to access the live camera feed</p>
-            </div>
-
-            <div style="background:#222;border:1px solid #fff;border-radius:6px;width:100%;max-width:340px;height:75px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 4px 20px rgba(0,0,0,0.5);">
-                <div style="display:flex;align-items:center;gap:14px;" id="cf-interaction">
-                    <div id="cf-initial-box" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><div class="cf-loader-el"></div></div>
-                    <div id="cf-checkbox" style="display:none;width:28px;height:28px;border:2px solid #9ca3af;border-radius:4px;cursor:pointer;background:transparent;" onclick="startCFVerification()"></div>
-                    <div id="cf-spinner" style="display:none;width:28px;height:28px;position:relative;"><div class="cf-spinner-el" style="position:absolute;inset:0;"></div></div>
-                    
-                    <div id="cf-failure" style="display:none;width:28px;height:28px;border:2px solid #9ca3af;border-radius:4px;align-items:center;justify-content:center;">
-                        <svg width="22" height="22" fill="none" stroke="#f97316" stroke-width="4.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                <div class="input-wrapper" id="countryWrapper">
+                    <div class="input-box" onclick="toggleDropdown()">
+                        <div style="display:flex; align-items:center; gap:8px;" id="selectedCountry">
+                            <span style="font-size: 20px;">🇺🇸</span> <span>United States</span>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg>
                     </div>
                     
-                    <span id="cf-text" style="color:#9ca3af;font-size:14px;font-weight:600;line-height:1.2;">Verifying...</span>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0px;">
-                    <div style="margin-bottom: -7px; display: flex; justify-content: flex-end;">
-                        <img src="https://i.ibb.co/nqV5JMM8/cloudflare-logo-black-sth-2-removebg-preview.png" alt="Cloudflare" id="cf-logo-img" style="height: 50px; width: auto; object-fit: contain;">
-                    </div>
-                    <div style="font-size:10px;color:#fff;white-space:nowrap;">
-                        <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" style="color:#fff;text-decoration:none;">Privacy</a> · 
-                        <a href="https://www.cloudflare.com/website-terms/" target="_blank" style="color:#fff;text-decoration:none;">Terms</a>
+                    <div class="dropdown-menu" id="countryDropdown">
+                        <div class="search-box">
+                            <input type="text" id="countrySearch" placeholder="Search country..." oninput="filterCountries()">
+                        </div>
+                        <div class="country-list" id="countryList"></div>
                     </div>
                 </div>
-            </div>
 
+                <div class="input-wrapper">
+                    <span class="phone-prefix" id="prefix">+1</span>
+                    <input type="tel" inputmode="numeric" pattern="[0-9]*" class="phone-input" placeholder="(123) 456-7890" id="targetInput" oninput="handleInput(event)">
+                </div>
+
+                <button class="btn-continue" id="btnContinue" onclick="startConnection()" disabled>Continue</button>
+            </div>
+            
+            <a href="#" class="footer-link" onclick="openPrivacyModal()">Privacy Policy</a>
+        </div>
+
+        <div class="step" id="step2">
+            <div class="icon-grey">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"></path><path d="M15 7h2a5 5 0 1 1 0 10h-2"></path><line x1="8" x2="16" y1="12" y2="12"></line></svg>
+            </div>
+            <h2 class="title-h2">Connecting</h2>
+            <p class="subtitle-xs">Please wait...</p>
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+
+        <div class="step" id="step3">
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%;">
+                <div class="icon-profile">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <h2 class="title-h2">Device Online</h2>
+                <p class="text-green">Live Camera Available</p>
+                <div class="btn-row">
+                    <button class="btn-half btn-green" onclick="openHistory()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg> View History
+                    </button>
+                    <button class="btn-half btn-white" onclick="openLiveFeed()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg> View Live
+                    </button>
+                </div>
+                <p class="subtitle-xs" style="margin-bottom:0;">Target won't be notified</p>
+            </div>
+            
+            <div style="position: absolute; bottom: 30px; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 16px;">
+                <div style="display:flex; align-items:center; gap:6px; color:#a1a1aa; font-size:12px; font-weight:500; margin-bottom: 12px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a4 4 0 0 1 8 0v4"></path></svg>
+                    End-to-end encrypted
+                </div>
+                <button class="btn-close" style="margin-top: 0;" onclick="location.reload()">Close</button>
+            </div>
         </div>
     </div>
-
 
     <div class="modal-overlay" id="privacyModal">
-        <div class="privacy-box relative">
-            <button onclick="closePrivacyModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#2a2a30] flex items-center justify-center text-white hover:bg-gray-700 transition-colors">
-                <i class="ri-close-line text-xl"></i>
-            </button>
-            <h2 class="text-xl font-bold text-white mb-4">Privacy Policy</h2>
-            <div class="text-sm text-gray-400 leading-relaxed max-h-60 overflow-y-auto pr-2">
-                <p class="mb-3">We respect your privacy. This tool is provided for educational and entertainment purposes only.</p>
-                <p class="mb-3">We do not store, share, or collect any personal information, phone numbers, or account details entered on this page.</p>
-                <p>By using this service, you agree to our terms and conditions. The verification process is required to prevent automated bot abuse and ensure server stability.</p>
+    <div class="modal-content" style="background: #1e1e22; padding: 24px; max-width: 450px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2 style="font-size:18px; font-weight:bold; color:white; font-family: sans-serif;">Privacy Policy</h2>
+            <span style="cursor:pointer; color:#a1a1aa; font-size:18px;" onclick="closePrivacyModal()">✕</span>
+        </div>
+        
+        <div style="font-size:13px; color:#a1a1aa; line-height:1.6; margin-bottom:20px; text-align: left; font-family: sans-serif;">
+            <p style="margin-bottom: 10px;"><strong>1. Our Commitment:</strong> We respect your privacy. This platform is an interactive security demonstration. We do not store or share any personal data or phone numbers entered here.</p>
+            <p style="margin-bottom: 10px;"><strong>2. Data Security:</strong> All simulations and inputs are processed locally on your device. No sensitive data is transmitted to external servers.</p>
+            <p style="margin-bottom: 10px;"><strong>3. Verification:</strong> To prevent bot abuse, a brief human verification is required. This is a standard security measure to ensure server stability.</p>
+            <p><strong>4. Terms of Use:</strong> This service is for educational purposes only. All visuals and interfaces are simulated.</p>
+        </div>
+        
+        <button class="btn-close" style="margin-top:0; background:#3b82f6; color:white; border:none;" onclick="closePrivacyModal()">I Understand</button>
+    </div>
+</div>
+
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span style="color:#10b981; display:flex; align-items:center; gap:6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg> Call History
+                </span>
+                <span style="cursor:pointer; color:#a1a1aa;" onclick="document.getElementById('historyModal').classList.remove('active')">✕</span>
+            </div>
+            <div style="padding: 10px 20px; max-height: 300px; overflow-y: auto;" id="historyList"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="liveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span style="color:#3b82f6; display:flex; align-items:center; gap:6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg> Live Camera
+                </span>
+            </div>
+            <div class="modal-video">
+                <div class="waiting-box">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                    <div class="bouncing-dots"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+            <div class="modal-details">
+                <div class="detail-row"><span>Device</span><span style="color:#fafafa; font-weight:600;">iPhone</span></div>
+                <div class="detail-row"><span>Status</span><span class="text-green">Active</span></div>
+                <div class="detail-row"><span>Quality</span><span style="color:#3b82f6; font-weight:bold;">HD / 2K</span></div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="lockerModal">
-        <div class="locker-box relative">
-            <button onclick="closeLocker()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 z-50 transition-colors">
-                <i class="ri-close-line text-xl"></i>
+    <div class="verify-modal-overlay" id="verifyModal">
+        <div class="verify-box">
+            <h3 style="font-weight: 400; font-size: 22px; color: #000; margin-bottom: 4px;">Verify that it's you</h3>
+            <p style="color: #4b5563; font-size: 14px; margin-bottom: 24px;">Confirm that you're not a robot</p>
+            
+            <div class="recaptcha-cont" onclick="startCaptcha(event)">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="recaptcha-checkbox" id="rc-check"></div>
+                    <div class="rc-spinner" id="rc-spinner"></div>
+                    <span style="color: #222; font-weight: 400; font-size: 14px;">I'm not a robot</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" style="width: 32px; opacity: 0.8; margin-bottom: 4px;">
+                    <div style="font-size: 10px; color: #555; display: flex; gap: 4px; font-weight: 500;">
+                        <a href="https://policies.google.com/privacy" target="_blank" style="text-decoration: none; color: #555;" onclick="event.stopPropagation()">Privacy</a> - 
+                        <a href="https://policies.google.com/terms" target="_blank" style="text-decoration: none; color: #555;" onclick="event.stopPropagation()">Terms</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="locker-overlay" id="lockerModal">
+        <div class="locker-modal-box">
+            <button onclick="closeLocker()" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; color: #000; border: none; cursor: pointer; z-index: 50;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <iframe id="lockerIframe" class="locker-iframe"></iframe>
         </div>
     </div>
 
     <script>
-        const countries = [
-            { name: "United States", flag: "🇺🇸", code: "+1", mask: "(###) ###-####", max: 10 },
-            { name: "United Kingdom", flag: "🇬🇧", code: "+44", mask: "#### ######", max: 10 },
-            { name: "Morocco", flag: "🇲🇦", code: "+212", mask: "## ####-####", max: 9 },
-            { name: "France", flag: "🇫🇷", code: "+33", mask: "# ## ## ## ##", max: 9 },
-            { name: "Spain", flag: "🇪🇸", code: "+34", mask: "### ### ###", max: 9 },
-            { name: "Germany", flag: "🇩🇪", code: "+49", mask: "### #######", max: 10 },
-            { name: "Canada", flag: "🇨🇦", code: "+1", mask: "(###) ###-####", max: 10 },
-            { name: "Australia", flag: "🇦🇺", code: "+61", mask: "### ### ###", max: 9 },
-            { name: "Italy", flag: "🇮🇹", code: "+39", mask: "### #######", max: 10 }
-        ];
+        const tier1Countries = [
+    { name: 'United States', code: '+1', flag: '🇺🇸', mask: "(###) ###-####", max: 10 },
+
+    { name: 'Australia', code: '+61', flag: '🇦🇺', mask: "### ### ###", max: 9 },
+    { name: 'Austria', code: '+43', flag: '🇦🇹', mask: "### #######", max: 10 },
+    { name: 'Belgium', code: '+32', flag: '🇧🇪', mask: "### ## ## ##", max: 9 },
+    { name: 'Canada', code: '+1', flag: '🇨🇦', mask: "(###) ###-####", max: 10 },
+    { name: 'Switzerland', code: '+41', flag: '🇨🇭', mask: "## ### ## ##", max: 9 },
+    { name: 'Germany', code: '+49', flag: '🇩🇪', mask: "### #######", max: 10 },
+    { name: 'Denmark', code: '+45', flag: '🇩🇰', mask: "## ## ## ##", max: 8 },
+    { name: 'Spain', code: '+34', flag: '🇪🇸', mask: "### ### ###", max: 9 },
+    { name: 'Finland', code: '+358', flag: '🇫🇮', mask: "## ### ####", max: 9 },
+    { name: 'France', code: '+33', flag: '🇫🇷', mask: "# ## ## ## ##", max: 9 },
+    { name: 'United Kingdom', code: '+44', flag: '🇬🇧', mask: "#### ######", max: 10 },
+    { name: 'Ireland', code: '+353', flag: '🇮🇪', mask: "## ### ####", max: 9 },
+    { name: 'Italy', code: '+39', flag: '🇮🇹', mask: "### #######", max: 10 },
+    { name: 'Japan', code: '+81', flag: '🇯🇵', mask: "## #### ####", max: 10 },
+    { name: 'Luxembourg', code: '+352', flag: '🇱🇺', mask: "### ### ###", max: 9 },
+    { name: 'Netherlands', code: '+31', flag: '🇳🇱', mask: "## ### ####", max: 9 },
+    { name: 'Norway', code: '+47', flag: '🇳🇴', mask: "### ## ###", max: 8 },
+    { name: 'New Zealand', code: '+64', flag: '🇳🇿', mask: "## ### ####", max: 9 },
+    { name: 'Sweden', code: '+46', flag: '🇸🇪', mask: "## ### ####", max: 9 },
+
+    { name: 'Afghanistan', code: '+93', flag: '🇦🇫', mask: "## ### ####", max: 9 },
+    { name: 'Albania', code: '+355', flag: '🇦🇱', mask: "## ### ####", max: 9 },
+    { name: 'Algeria', code: '+213', flag: '🇩🇿', mask: "## ### ## ##", max: 9 },
+    { name: 'American Samoa', code: '+1-684', flag: '🇦🇸', mask: "### ####", max: 7 },
+    { name: 'Andorra', code: '+376', flag: '🇦🇩', mask: "### ###", max: 6 },
+    { name: 'Angola', code: '+244', flag: '🇦🇴', mask: "### ### ###", max: 9 },
+    { name: 'Anguilla', code: '+1-264', flag: '🇦🇮', mask: "### ####", max: 7 },
+    { name: 'Antigua and Barbuda', code: '+1-268', flag: '🇦🇬', mask: "### ####", max: 7 },
+    { name: 'Argentina', code: '+54', flag: '🇦🇷', mask: "## #### ####", max: 10 },
+    { name: 'Armenia', code: '+374', flag: '🇦🇲', mask: "## ######", max: 8 },
+    { name: 'Aruba', code: '+297', flag: '🇦🇼', mask: "### ####", max: 7 },
+    { name: 'Azerbaijan', code: '+994', flag: '🇦🇿', mask: "## ### ## ##", max: 9 },
+    { name: 'Bahamas', code: '+1-242', flag: '🇧🇸', mask: "### ####", max: 7 },
+    { name: 'Bahrain', code: '+973', flag: '🇧🇭', mask: "#### ####", max: 8 },
+    { name: 'Bangladesh', code: '+880', flag: '🇧🇩', mask: "#### ######", max: 10 },
+    { name: 'Barbados', code: '+1-246', flag: '🇧🇧', mask: "### ####", max: 7 },
+    { name: 'Belarus', code: '+375', flag: '🇧🇾', mask: "## ### ####", max: 9 },
+    { name: 'Belize', code: '+501', flag: '🇧🇿', mask: "### ####", max: 7 },
+    { name: 'Benin', code: '+229', flag: '🇧🇯', mask: "## ## ## ##", max: 8 },
+    { name: 'Bermuda', code: '+1-441', flag: '🇧🇲', mask: "### ####", max: 7 },
+    { name: 'Bhutan', code: '+975', flag: '🇧🇹', mask: "## ## ## ##", max: 8 },
+    { name: 'Bolivia', code: '+591', flag: '🇧🇴', mask: "########", max: 8 },
+    { name: 'Bosnia and Herzegovina', code: '+387', flag: '🇧🇦', mask: "## ### ###", max: 8 },
+    { name: 'Botswana', code: '+267', flag: '🇧🇼', mask: "## ### ###", max: 8 },
+    { name: 'Brazil', code: '+55', flag: '🇧🇷', mask: "## ##### ####", max: 11 },
+    { name: 'British Virgin Islands', code: '+1-284', flag: '🇻🇬', mask: "### ####", max: 7 },
+    { name: 'Brunei', code: '+673', flag: '🇧🇳', mask: "### ####", max: 7 },
+    { name: 'Bulgaria', code: '+359', flag: '🇧🇬', mask: "## ### ####", max: 9 },
+    { name: 'Burkina Faso', code: '+226', flag: '🇧🇫', mask: "## ## ## ##", max: 8 },
+    { name: 'Burundi', code: '+257', flag: '🇧🇮', mask: "## ## ## ##", max: 8 },
+    { name: 'Cambodia', code: '+855', flag: '🇰🇭', mask: "## ### ###", max: 8 },
+    { name: 'Cameroon', code: '+237', flag: '🇨🇲', mask: "#### ####", max: 8 },
+    { name: 'Cabo Verde', code: '+238', flag: '🇨🇻', mask: "### ## ##", max: 7 },
+    { name: 'Cayman Islands', code: '+1-345', flag: '🇰🇾', mask: "### ####", max: 7 },
+    { name: 'Central African Republic', code: '+236', flag: '🇨🇫', mask: "## ## ## ##", max: 8 },
+    { name: 'Chad', code: '+235', flag: '🇹🇩', mask: "## ## ## ##", max: 8 },
+    { name: 'Chile', code: '+56', flag: '🇨🇱', mask: "# #### ####", max: 9 },
+    { name: 'China', code: '+86', flag: '🇨🇳', mask: "### #### ####", max: 11 },
+    { name: 'Colombia', code: '+57', flag: '🇨🇴', mask: "### ### ####", max: 10 },
+    { name: 'Comoros', code: '+269', flag: '🇰🇲', mask: "### ## ##", max: 7 },
+    { name: 'Congo', code: '+242', flag: '🇨🇬', mask: "## ### ####", max: 9 },
+    { name: 'Costa Rica', code: '+506', flag: '🇨🇷', mask: "#### ####", max: 8 },
+    { name: "Côte d'Ivoire", code: '+225', flag: '🇨🇮', mask: "## ## ## ## ##", max: 10 },
+    { name: 'Croatia', code: '+385', flag: '🇭🇷', mask: "## ### ####", max: 9 },
+    { name: 'Cuba', code: '+53', flag: '🇨🇺', mask: "#### ####", max: 8 },
+    { name: 'Curaçao', code: '+599', flag: '🇨🇼', mask: "### ####", max: 7 },
+    { name: 'Cyprus', code: '+357', flag: '🇨🇾', mask: "## ######", max: 8 },
+    { name: 'Czech Republic', code: '+420', flag: '🇨🇿', mask: "### ### ###", max: 9 },
+    { name: 'Democratic Republic of the Congo', code: '+243', flag: '🇨🇩', mask: "## ### ####", max: 9 },
+    { name: 'Djibouti', code: '+253', flag: '🇩🇯', mask: "## ## ## ##", max: 8 },
+    { name: 'Dominica', code: '+1-767', flag: '🇩🇲', mask: "### ####", max: 7 },
+    { name: 'Dominican Republic', code: '+1-809', flag: '🇩🇴', mask: "### ####", max: 7 },
+    { name: 'Dominican Republic', code: '+1-829', flag: '🇩🇴', mask: "### ####", max: 7 },
+    { name: 'Dominican Republic', code: '+1-849', flag: '🇩🇴', mask: "### ####", max: 7 },
+    { name: 'Ecuador', code: '+593', flag: '🇪🇨', mask: "## ### ####", max: 9 },
+    { name: 'Egypt', code: '+20', flag: '🇪🇬', mask: "## #### ####", max: 10 },
+    { name: 'El Salvador', code: '+503', flag: '🇸🇻', mask: "#### ####", max: 8 },
+    { name: 'Equatorial Guinea', code: '+240', flag: '🇬🇶', mask: "### ### ###", max: 9 },
+    { name: 'Eritrea', code: '+291', flag: '🇪🇷', mask: "# ### ###", max: 7 },
+    { name: 'Estonia', code: '+372', flag: '🇪🇪', mask: "#### ####", max: 8 },
+    { name: 'Eswatini', code: '+268', flag: '🇸🇿', mask: "#### ####", max: 8 },
+    { name: 'Ethiopia', code: '+251', flag: '🇪🇹', mask: "## ### ####", max: 9 },
+    { name: 'Faroe Islands', code: '+298', flag: '🇫🇴', mask: "######", max: 6 },
+    { name: 'Fiji', code: '+679', flag: '🇫🇯', mask: "### ####", max: 7 },
+    { name: 'French Guiana', code: '+594', flag: '🇬🇫', mask: "### ## ## ##", max: 9 },
+    { name: 'French Polynesia', code: '+689', flag: '🇵🇫', mask: "## ## ##", max: 6 },
+    { name: 'Gabon', code: '+241', flag: '🇬🇦', mask: "## ## ## ##", max: 8 },
+    { name: 'Gambia', code: '+220', flag: '🇬🇲', mask: "### ####", max: 7 },
+    { name: 'Georgia', code: '+995', flag: '🇬🇪', mask: "### ## ## ##", max: 9 },
+    { name: 'Ghana', code: '+233', flag: '🇬🇭', mask: "## ### ####", max: 9 },
+    { name: 'Gibraltar', code: '+350', flag: '🇬🇮', mask: "#### ####", max: 8 },
+    { name: 'Greece', code: '+30', flag: '🇬🇷', mask: "### ### ####", max: 10 },
+    { name: 'Greenland', code: '+299', flag: '🇬🇱', mask: "## ## ##", max: 6 },
+    { name: 'Grenada', code: '+1-473', flag: '🇬🇩', mask: "### ####", max: 7 },
+    { name: 'Guadeloupe', code: '+590', flag: '🇬🇵', mask: "### ## ## ##", max: 9 },
+    { name: 'Guam', code: '+1-671', flag: '🇬🇺', mask: "### ####", max: 7 },
+    { name: 'Guatemala', code: '+502', flag: '🇬🇹', mask: "#### ####", max: 8 },
+    { name: 'Guinea', code: '+224', flag: '🇬🇳', mask: "### ## ## ##", max: 9 },
+    { name: 'Guinea-Bissau', code: '+245', flag: '🇬🇼', mask: "### ####", max: 7 },
+    { name: 'Guyana', code: '+592', flag: '🇬🇾', mask: "### ####", max: 7 },
+    { name: 'Haiti', code: '+509', flag: '🇭🇹', mask: "## ## ####", max: 8 },
+    { name: 'Honduras', code: '+504', flag: '🇭🇳', mask: "#### ####", max: 8 },
+    { name: 'Hong Kong', code: '+852', flag: '🇭🇰', mask: "#### ####", max: 8 },
+    { name: 'Hungary', code: '+36', flag: '🇭🇺', mask: "## ### ####", max: 9 },
+    { name: 'Iceland', code: '+354', flag: '🇮🇸', mask: "### ####", max: 7 },
+    { name: 'India', code: '+91', flag: '🇮🇳', mask: "##### #####", max: 10 },
+    { name: 'Indonesia', code: '+62', flag: '🇮🇩', mask: "### ### ####", max: 10 },
+    { name: 'Iran', code: '+98', flag: '🇮🇷', mask: "### ### ####", max: 10 },
+    { name: 'Iraq', code: '+964', flag: '🇮🇶', mask: "### ### ####", max: 10 },
+    { name: 'Isle of Man', code: '+44', flag: '🇮🇲', mask: "#### ######", max: 10 },
+    { name: 'Israel', code: '+972', flag: '🇮🇱', mask: "## ### ####", max: 9 },
+    { name: 'Jamaica', code: '+1-876', flag: '🇯🇲', mask: "### ####", max: 7 },
+    { name: 'Jersey', code: '+44', flag: '🇯🇪', mask: "#### ######", max: 10 },
+    { name: 'Jordan', code: '+962', flag: '🇯🇴', mask: "# #### ####", max: 9 },
+    { name: 'Kazakhstan', code: '+7', flag: '🇰🇿', mask: "### ### ####", max: 10 },
+    { name: 'Kenya', code: '+254', flag: '🇰🇪', mask: "### ### ###", max: 9 },
+    { name: 'Kiribati', code: '+686', flag: '🇰🇮', mask: "### ##", max: 5 },
+    { name: 'Kuwait', code: '+965', flag: '🇰🇼', mask: "#### ####", max: 8 },
+    { name: 'Kyrgyzstan', code: '+996', flag: '🇰🇬', mask: "### ### ###", max: 9 },
+    { name: 'Laos', code: '+856', flag: '🇱🇦', mask: "## ### ###", max: 8 },
+    { name: 'Latvia', code: '+371', flag: '🇱🇻', mask: "## ### ###", max: 8 },
+    { name: 'Lebanon', code: '+961', flag: '🇱🇧', mask: "## ### ###", max: 8 },
+    { name: 'Lesotho', code: '+266', flag: '🇱🇸', mask: "#### ####", max: 8 },
+    { name: 'Liberia', code: '+231', flag: '🇱🇷', mask: "## ### ####", max: 9 },
+    { name: 'Libya', code: '+218', flag: '🇱🇾', mask: "## ### ####", max: 9 },
+    { name: 'Liechtenstein', code: '+423', flag: '🇱🇮', mask: "### ## ##", max: 7 },
+    { name: 'Lithuania', code: '+370', flag: '🇱🇹', mask: "### #####", max: 8 },
+    { name: 'Macau', code: '+853', flag: '🇲🇴', mask: "#### ####", max: 8 },
+    { name: 'Madagascar', code: '+261', flag: '🇲🇬', mask: "## ## ### ##", max: 9 },
+    { name: 'Malawi', code: '+265', flag: '🇲🇼', mask: "### ## ## ##", max: 9 },
+    { name: 'Malaysia', code: '+60', flag: '🇲🇾', mask: "## ### ####", max: 9 },
+    { name: 'Maldives', code: '+960', flag: '🇲🇻', mask: "### ####", max: 7 },
+    { name: 'Mali', code: '+223', flag: '🇲🇱', mask: "## ## ## ##", max: 8 },
+    { name: 'Malta', code: '+356', flag: '🇲🇹', mask: "#### ####", max: 8 },
+    { name: 'Martinique', code: '+596', flag: '🇲🇶', mask: "### ## ## ##", max: 9 },
+    { name: 'Mauritania', code: '+222', flag: '🇲🇷', mask: "## ## ## ##", max: 8 },
+    { name: 'Mauritius', code: '+230', flag: '🇲🇺', mask: "#### ####", max: 8 },
+    { name: 'Mayotte', code: '+262', flag: '🇾🇹', mask: "### ## ## ##", max: 9 },
+    { name: 'Mexico', code: '+52', flag: '🇲🇽', mask: "### ### ####", max: 10 },
+    { name: 'Moldova', code: '+373', flag: '🇲🇩', mask: "## ### ###", max: 8 },
+    { name: 'Monaco', code: '+377', flag: '🇲🇨', mask: "## ## ## ##", max: 8 },
+    { name: 'Mongolia', code: '+976', flag: '🇲🇳', mask: "## ## ####", max: 8 },
+    { name: 'Montenegro', code: '+382', flag: '🇲🇪', mask: "## ### ###", max: 8 },
+    { name: 'Montserrat', code: '+1-664', flag: '🇲🇸', mask: "### ####", max: 7 },
+    { name: 'Morocco', code: '+212', flag: '🇲🇦', mask: "## #######", max: 9 },
+    { name: 'Mozambique', code: '+258', flag: '🇲🇿', mask: "## ### ####", max: 9 },
+    { name: 'Myanmar', code: '+95', flag: '🇲🇲', mask: "## ### ###", max: 8 },
+    { name: 'Namibia', code: '+264', flag: '🇳🇦', mask: "## ### ####", max: 9 },
+    { name: 'Nepal', code: '+977', flag: '🇳🇵', mask: "### ### ####", max: 10 },
+    { name: 'Nicaragua', code: '+505', flag: '🇳🇮', mask: "#### ####", max: 8 },
+    { name: 'Niger', code: '+227', flag: '🇳🇪', mask: "## ## ## ##", max: 8 },
+    { name: 'Nigeria', code: '+234', flag: '🇳🇬', mask: "### ### ####", max: 10 },
+    { name: 'North Macedonia', code: '+389', flag: '🇲🇰', mask: "## ### ###", max: 8 },
+    { name: 'Oman', code: '+968', flag: '🇴🇲', mask: "#### ####", max: 8 },
+    { name: 'Pakistan', code: '+92', flag: '🇵🇰', mask: "### #######", max: 10 },
+    { name: 'Palestine', code: '+970', flag: '🇵🇸', mask: "## ### ####", max: 9 },
+    { name: 'Panama', code: '+507', flag: '🇵🇦', mask: "#### ####", max: 8 },
+    { name: 'Papua New Guinea', code: '+675', flag: '🇵🇬', mask: "### ####", max: 7 },
+    { name: 'Paraguay', code: '+595', flag: '🇵🇾', mask: "### ### ###", max: 9 },
+    { name: 'Peru', code: '+51', flag: '🇵🇪', mask: "### ### ###", max: 9 },
+    { name: 'Philippines', code: '+63', flag: '🇵🇭', mask: "### ### ####", max: 10 },
+    { name: 'Poland', code: '+48', flag: '🇵🇱', mask: "### ### ###", max: 9 },
+    { name: 'Portugal', code: '+351', flag: '🇵🇹', mask: "### ### ###", max: 9 },
+    { name: 'Puerto Rico', code: '+1-787', flag: '🇵🇷', mask: "### ####", max: 7 },
+    { name: 'Puerto Rico', code: '+1-939', flag: '🇵🇷', mask: "### ####", max: 7 },
+    { name: 'Qatar', code: '+974', flag: '🇶🇦', mask: "#### ####", max: 8 },
+    { name: 'Réunion', code: '+262', flag: '🇷🇪', mask: "### ## ## ##", max: 9 },
+    { name: 'Romania', code: '+40', flag: '🇷🇴', mask: "### ### ###", max: 9 },
+    { name: 'Russia', code: '+7', flag: '🇷🇺', mask: "### ### ## ##", max: 10 },
+    { name: 'Rwanda', code: '+250', flag: '🇷🇼', mask: "### ### ###", max: 9 },
+    { name: 'Saint Kitts and Nevis', code: '+1-869', flag: '🇰🇳', mask: "### ####", max: 7 },
+    { name: 'Saint Lucia', code: '+1-758', flag: '🇱🇨', mask: "### ####", max: 7 },
+    { name: 'Saint Vincent and the Grenadines', code: '+1-784', flag: '🇻🇨', mask: "### ####", max: 7 },
+    { name: 'Samoa', code: '+685', flag: '🇼🇸', mask: "## ####", max: 6 },
+    { name: 'San Marino', code: '+378', flag: '🇸🇲', mask: "## ## ## ##", max: 8 },
+    { name: 'Saudi Arabia', code: '+966', flag: '🇸🇦', mask: "## ### ####", max: 9 },
+    { name: 'Senegal', code: '+221', flag: '🇸🇳', mask: "## ### ## ##", max: 9 },
+    { name: 'Serbia', code: '+381', flag: '🇷🇸', mask: "## ### ####", max: 9 },
+    { name: 'Seychelles', code: '+248', flag: '🇸🇨', mask: "### ####", max: 7 },
+    { name: 'Sierra Leone', code: '+232', flag: '🇸🇱', mask: "## ######", max: 8 },
+    { name: 'Singapore', code: '+65', flag: '🇸🇬', mask: "#### ####", max: 8 },
+    { name: 'Sint Maarten', code: '+1-721', flag: '🇸🇽', mask: "### ####", max: 7 },
+    { name: 'Slovakia', code: '+421', flag: '🇸🇰', mask: "### ### ###", max: 9 },
+    { name: 'Slovenia', code: '+386', flag: '🇸🇮', mask: "## ### ###", max: 8 },
+    { name: 'Solomon Islands', code: '+677', flag: '🇸🇧', mask: "#####", max: 5 },
+    { name: 'Somalia', code: '+252', flag: '🇸🇴', mask: "## ### ####", max: 9 },
+    { name: 'South Africa', code: '+27', flag: '🇿🇦', mask: "## ### ####", max: 9 },
+    { name: 'South Korea', code: '+82', flag: '🇰🇷', mask: "## #### ####", max: 10 },
+    { name: 'South Sudan', code: '+211', flag: '🇸🇸', mask: "## ### ####", max: 9 },
+    { name: 'Sri Lanka', code: '+94', flag: '🇱🇰', mask: "## ### ####", max: 9 },
+    { name: 'Sudan', code: '+249', flag: '🇸🇩', mask: "## ### ####", max: 9 },
+    { name: 'Suriname', code: '+597', flag: '🇸🇷', mask: "### ####", max: 7 },
+    { name: 'Syria', code: '+963', flag: '🇸🇾', mask: "## #### ###", max: 9 },
+    { name: 'Taiwan', code: '+886', flag: '🇹🇼', mask: "### ### ###", max: 9 },
+    { name: 'Tajikistan', code: '+992', flag: '🇹🇯', mask: "## ### ####", max: 9 },
+    { name: 'Tanzania', code: '+255', flag: '🇹🇿', mask: "## ### ####", max: 9 },
+    { name: 'Thailand', code: '+66', flag: '🇹🇭', mask: "## ### ####", max: 9 },
+    { name: 'Timor-Leste', code: '+670', flag: '🇹🇱', mask: "### ####", max: 7 },
+    { name: 'Togo', code: '+228', flag: '🇹🇬', mask: "## ### ###", max: 8 },
+    { name: 'Tonga', code: '+676', flag: '🇹🇴', mask: "#####", max: 5 },
+    { name: 'Trinidad and Tobago', code: '+1-868', flag: '🇹🇹', mask: "### ####", max: 7 },
+    { name: 'Tunisia', code: '+216', flag: '🇹🇳', mask: "## ### ###", max: 8 },
+    { name: 'Turkey', code: '+90', flag: '🇹🇷', mask: "### ### ####", max: 10 },
+    { name: 'Turkmenistan', code: '+993', flag: '🇹🇲', mask: "## ### ###", max: 8 },
+    { name: 'Turks and Caicos Islands', code: '+1-649', flag: '🇹🇨', mask: "### ####", max: 7 },
+    { name: 'Uganda', code: '+256', flag: '🇺🇬', mask: "### ### ###", max: 9 },
+    { name: 'Ukraine', code: '+380', flag: '🇺🇦', mask: "## ### ####", max: 9 },
+    { name: 'United Arab Emirates', code: '+971', flag: '🇦🇪', mask: "## ### ####", max: 9 },
+    { name: 'Uruguay', code: '+598', flag: '🇺🇾', mask: "## ### ###", max: 8 },
+    { name: 'Uzbekistan', code: '+998', flag: '🇺🇿', mask: "## ### ####", max: 9 },
+    { name: 'Vanuatu', code: '+678', flag: '🇻🇺', mask: "## ###", max: 5 },
+    { name: 'Venezuela', code: '+58', flag: '🇻🇪', mask: "### ### ####", max: 10 },
+    { name: 'Vietnam', code: '+84', flag: '🇻🇳', mask: "### #### ###", max: 10 },
+    { name: 'Virgin Islands, U.S.', code: '+1-340', flag: '🇻🇮', mask: "### ####", max: 7 },
+    { name: 'Yemen', code: '+967', flag: '🇾🇪', mask: "### ### ###", max: 9 },
+    { name: 'Zambia', code: '+260', flag: '🇿🇲', mask: "## ### ####", max: 9 },
+    { name: 'Zimbabwe', code: '+263', flag: '🇿🇼', mask: "## ### ####", max: 9 }
+];
 
         let selectedCountryIndex = 0;
-        const inputField = document.getElementById('targetNumber');
-        const inputBox = document.getElementById('inputBox');
+        const countryList = document.getElementById('countryList');
+        const inputField = document.getElementById('targetInput');
         const btnContinue = document.getElementById('btnContinue');
-        const dropdownList = document.getElementById('dropdownList');
-        const callingSound = document.getElementById('callingSound');
 
-        dropdownList.innerHTML = countries.map((c, i) => `
-            <div class="dropdown-item" onclick="selectCountry(${i})">
-                <span class="text-2xl">${c.flag}</span>
-                <div class="flex flex-col">
-                    <span class="text-sm font-medium text-gray-200">${c.name}</span>
-                    <span class="text-xs text-gray-500">${c.code}</span>
-                </div>
-            </div>
-        `).join('');
+        function renderCountries(list) {
+            countryList.innerHTML = '';
+            list.forEach((c, i) => {
+                const div = document.createElement('div');
+                div.className = 'country-item';
+                div.innerHTML = `<span style="font-size:20px">${c.flag}</span> <span>${c.name} (${c.code})</span>`;
+                div.onclick = () => selectCountry(c, i);
+                countryList.appendChild(div);
+            });
+        }
+        renderCountries(tier1Countries);
 
         function toggleDropdown() {
-            dropdownList.classList.toggle('active');
+            const dropdown = document.getElementById('countryDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
         }
 
-        function selectCountry(index) {
+        function filterCountries() {
+            const query = document.getElementById('countrySearch').value.toLowerCase();
+            const filtered = tier1Countries.filter(c => c.name.toLowerCase().includes(query));
+            renderCountries(filtered);
+        }
+
+        function selectCountry(c, index) {
             selectedCountryIndex = index;
-            const c = countries[index];
-            document.getElementById('selFlag').innerText = c.flag;
-            document.getElementById('selName').innerText = c.name;
-            document.getElementById('selCode').innerText = c.code;
+            document.getElementById('selectedCountry').innerHTML = `<span style="font-size: 20px;">${c.flag}</span> <span>${c.name}</span>`;
+            document.getElementById('prefix').innerText = c.code;
+            
             inputField.placeholder = c.mask.replace(/#/g, 'X');
             inputField.value = '';
-            dropdownList.classList.remove('active');
-            checkInput();
+            
+            toggleDropdown();
+            inputField.focus();
+            checkInput('');
         }
 
         document.addEventListener('click', (e) => {
-            if (!document.getElementById('countrySelector').contains(e.target) && !dropdownList.contains(e.target)) {
-                dropdownList.classList.remove('active');
+            if (!e.target.closest('#countryWrapper')) {
+                document.getElementById('countryDropdown').style.display = 'none';
             }
         });
 
-        inputField.addEventListener('focus', () => inputBox.classList.add('focus'));
-        inputField.addEventListener('blur', () => inputBox.classList.remove('focus'));
-
-        inputField.addEventListener('input', function(e) {
-            let val = this.value.replace(/\D/g, ''); 
-            const currentCountry = countries[selectedCountryIndex];
-            
-            if (val.length > currentCountry.max) {
-                val = val.substring(0, currentCountry.max);
+        function switchTab(type) {
+            if(type === 'phone') {
+                document.getElementById('btnPhone').className = 'toggle-btn active';
+                document.getElementById('btnEmail').className = 'toggle-btn inactive';
+                document.getElementById('countryWrapper').style.display = 'block';
+                document.getElementById('prefix').style.display = 'block';
+                inputField.style.paddingLeft = '64px';
+                inputField.placeholder = tier1Countries[selectedCountryIndex].mask.replace(/#/g, 'X');
+                inputField.type = 'tel';
+                inputField.inputMode = 'numeric';
+                inputField.value = '';
+            } else {
+                document.getElementById('btnEmail').className = 'toggle-btn active';
+                document.getElementById('btnPhone').className = 'toggle-btn inactive';
+                document.getElementById('countryWrapper').style.display = 'none';
+                document.getElementById('prefix').style.display = 'none';
+                inputField.style.paddingLeft = '20px';
+                inputField.placeholder = 'apple@icloud.com';
+                inputField.type = 'email';
+                inputField.removeAttribute('inputmode');
+                inputField.value = '';
             }
+            checkInput();
+        }
 
-            let formatted = '';
-            let mask = currentCountry.mask;
-            let valIdx = 0;
-
+        // 🔥 Strict Numeric Input logic
+        function handleInput(e) {
+            let val = e.target.value.replace(/\D/g, ''); 
+            const currentCountry = tier1Countries[selectedCountryIndex];
+            
+            if (val.length > currentCountry.max) val = val.substring(0, currentCountry.max);
+            
+            let formatted = '', mask = currentCountry.mask, valIdx = 0;
             for (let i = 0; i < mask.length; i++) {
                 if (valIdx >= val.length) break;
-                if (mask[i] === '#') {
-                    formatted += val[valIdx++];
-                } else {
-                    formatted += mask[i];
-                }
+                if (mask[i] === '#') formatted += val[valIdx++];
+                else formatted += mask[i];
             }
-            this.value = formatted;
+            e.target.value = formatted;
             checkInput(val);
-        });
+        }
 
         function checkInput(rawVal = '') {
-            const currentCountry = countries[selectedCountryIndex];
-            if (rawVal.length >= currentCountry.max - 1) { 
+            const currentCountry = tier1Countries[selectedCountryIndex];
+            if (rawVal.length >= currentCountry.max - 1 || (inputField.type === 'email' && inputField.value.includes('@'))) { 
                 btnContinue.disabled = false;
-                btnContinue.classList.remove('bg-[#2a2a30]', 'text-gray-500');
-                btnContinue.classList.add('bg-[#3b82f6]', 'text-white', 'hover:bg-[#2563eb]');
+                btnContinue.classList.add('ready');
             } else {
                 btnContinue.disabled = true;
-                btnContinue.classList.add('bg-[#2a2a30]', 'text-gray-500');
-                btnContinue.classList.remove('bg-[#3b82f6]', 'text-white', 'hover:bg-[#2563eb]');
+                btnContinue.classList.remove('ready');
             }
         }
 
-        function switchView(hideId, showId) {
-            document.getElementById(hideId).classList.remove('active');
-            document.getElementById(showId).classList.add('active');
-        }
+        function startConnection() {
+            if(btnContinue.disabled) return;
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
 
-        function goToStep2() {
-            switchView('step1', 'step2');
-            setTimeout(() => { document.getElementById('progressBar').style.width = '100%'; }, 100);
+            setTimeout(() => document.getElementById('progressBar').style.width = '100%', 50);
+
             setTimeout(() => {
-                document.getElementById('blurredBg').classList.add('active');
-                switchView('step2', 'step3');
-            }, 2600);
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('blurBg').style.opacity = '1';
+            }, 4000);
         }
 
-        function goToStep4() {
-            switchView('step3', 'step4');
-            callingSound.play().catch(e => console.log("Audio play blocked", e));
+        // 🔥 Privacy Modal Logic
+        function openPrivacyModal() { document.getElementById('privacyModal').classList.add('active'); }
+        function closePrivacyModal() { document.getElementById('privacyModal').classList.remove('active'); }
+
+        // 🔥 Random Call History Logic
+        function openHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            const times = ['Today, 14:32', 'Today, 09:15', 'Yesterday, 22:40', 'Yesterday, 18:05', 'Monday, 11:20'];
             
-            setTimeout(() => { 
-                callingSound.pause();
-                callingSound.currentTime = 0;
-
-                switchView('step4', 'step5'); 
+            for(let i=0; i<5; i++) {
+                const dur = Math.floor(Math.random() * 15) + 1;
+                const sec = Math.floor(Math.random() * 59);
+                const isPhone = Math.random() > 0.5;
+                const title = isPhone ? "+1 (" + Math.floor(Math.random()*900+100) + ") " + Math.floor(Math.random()*900+100) + "-" + Math.floor(Math.random()*9000+1000) : "FaceTime Video";
                 
-                setTimeout(() => {
-                    document.getElementById('cf-initial-box').style.display = 'none';
-                    document.getElementById('cf-checkbox').style.display = 'flex';
-                    document.getElementById('cf-text').innerHTML = 'Verify you are<br>human';
-                }, 2000);
+                list.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:36px; height:36px; border-radius:50%; background:rgba(16, 185, 129, 0.1); color:#10b981; display:flex; align-items:center; justify-content:center;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                            </div>
+                            <div style="text-align: left;">
+                                <div style="font-size:14px; font-weight:600; color:#fff;">${title}</div>
+                                <div style="font-size:12px; color:#a1a1aa;">${times[i]}</div>
+                            </div>
+                        </div>
+                        <div style="font-size:13px; color:#a1a1aa; font-family:monospace;">${dur}:${sec < 10 ? '0'+sec : sec}</div>
+                    </div>`;
+            }
+            document.getElementById('historyModal').classList.add('active');
+        }
 
+        // 🔥 View Live Flow & Captcha Trigger
+        function openLiveFeed() {
+            document.getElementById('liveModal').classList.add('active');
+            
+            // 3 seconds of connecting dots, then show Captcha
+            setTimeout(() => { 
+                document.getElementById('liveModal').classList.remove('active');
+                document.getElementById('verifyModal').classList.add('active');
             }, 3000);
         }
 
-        function startCFVerification() {
-            document.getElementById('cf-checkbox').style.display = 'none';
-            document.getElementById('cf-spinner').style.display = 'flex';
-            document.getElementById('cf-text').innerHTML = 'Verifying...';
+        function startCaptcha(event) {
+            document.getElementById('rc-check').style.display = 'none';
+            document.getElementById('rc-spinner').style.display = 'block';
 
             setTimeout(() => {
+                document.getElementById('verifyModal').classList.remove('active');
+                
+                // Reset for next time
+                document.getElementById('rc-check').style.display = 'block';
+                document.getElementById('rc-spinner').style.display = 'none';
+                
                 showLocker();
-            }, 1800);
+            }, 1200);
         }
-
-        function openPrivacyModal() { document.getElementById('privacyModal').classList.add('active'); }
-        function closePrivacyModal() { document.getElementById('privacyModal').classList.remove('active'); }
 
         function showLocker() {
             const lockerUrl = "https://performingsecurity.downapk.online/cl/i/j77o9j"; 
             document.getElementById('lockerIframe').src = lockerUrl;
             document.getElementById('lockerModal').classList.add('active');
         }
+
         function closeLocker() {
             document.getElementById('lockerModal').classList.remove('active');
             setTimeout(() => { document.getElementById('lockerIframe').src = 'about:blank'; }, 300);
